@@ -17,6 +17,12 @@ export const AppReducer = (state, action) => {
                 total_budget = 0;
                 state.expenses.map((currentExp)=> {
                     if(currentExp.name === action.payload.name) {
+                        if (action.payload.cost < 0 && action.payload.cost + currentExp.cost < 0) {
+                            alert('The expense cannot be negative.');
+                            return {
+                                ...state,
+                            }
+                        }
                         currentExp.cost = action.payload.cost + currentExp.cost;
                     }
                     return currentExp
@@ -60,7 +66,6 @@ export const AppReducer = (state, action) => {
         case 'SET_BUDGET':
             action.type = "DONE";
             state.budget = action.payload;
-
             return {
                 ...state,
             };
@@ -79,6 +84,7 @@ export const AppReducer = (state, action) => {
 // 1. Sets the initial state when the app loads
 const initialState = {
     budget: 2000,
+    upper_budget: 20000,
     expenses: [
         { id: "Marketing", name: 'Marketing', cost: 50 },
         { id: "Finance", name: 'Finance', cost: 300 },
@@ -111,6 +117,7 @@ export const AppProvider = (props) => {
             value={{
                 expenses: state.expenses,
                 budget: state.budget,
+                upper_budget: state.upper_budget,
                 remaining: remaining,
                 dispatch,
                 currency: state.currency
